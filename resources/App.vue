@@ -78,10 +78,10 @@ let getPagination = (link) => {
 let paginationArray = computed(() => {
     let pages = [];
     let startPage = Math.max(pagination.value.current_page - 2, 1);
-    let endPage = Math.min(startPage + 4, pagination.value.last_page);
+    let endPage = Math.min(startPage + 2, pagination.value.last_page);
 
-    if (endPage - startPage < 4) {
-        startPage = Math.max(endPage - 4, 1);
+    if (endPage - startPage < 2) {
+        startPage = Math.max(endPage - 2, 1);
     }
 
     if (startPage > 1) {
