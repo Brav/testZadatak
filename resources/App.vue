@@ -106,8 +106,6 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.value.curre
 
 </script>
 
-
-
 <template>
     <div class="container mx-auto flex p-5">
         <div class="w-1/4">
@@ -146,7 +144,8 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.value.curre
                                 <span class="font-normal" v-html="tv.name"></span>
                             </h2>
                             <div class="card-actions justify-end">
-                                <a class="btn btn-primary" :href="tvLink(tv.link)">
+                                <a class="btn btn-primary" :href="tvLink(tv.link)"
+                                   target="_blank">
                                     View Details
                                 </a>
                             </div>
