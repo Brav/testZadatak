@@ -74,8 +74,8 @@ let getPagination = (link) => {
         })
 }
 
-let paginationBackLink = computed(() => `api/items?page=${pagination.current_page - 1}`)
-let paginationNextLink = computed(() => `api/items?page=${pagination.current_page + 1}`)
+let paginationBackLink = computed(() => `api/items?page=${pagination.value.current_page - 1}`)
+let paginationNextLink = computed(() => `api/items?page=${pagination.value.current_page + 1}`)
 
 </script>
 
@@ -97,7 +97,7 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.current_pag
         </div>
         <div class="w-3/4">
 
-            <div class="divider divider-primary">TV Models ({{ pagination.total }})</div>
+            <div class="divider divider-primary uppercase">{{ currentCategory?.name }} ({{ pagination.total }})</div>
             <div class="grid grid-cols-3 gap-2 justify-between size-fit">
 
 
@@ -132,14 +132,15 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.current_pag
             <div class="preview flex min-h-[6rem] min-w-[18rem] max-w-4xl flex-wrap items-center justify-center gap-2 overflow-x-hidden bg-cover bg-top p-4 ">
 
                 <a class="join-item btn"
+                   @click.prevent="getPagination(paginationBackLink)"
                    :href="paginationBackLink"
-                   v-if="pagination.current_page < 1"><</a>
+                   v-if="pagination.current_page > 1"><</a>
 
-                <button class="join-item btn"
+                <button v-else
+                        class="join-item btn"
                         :class="{'btn-disabled': pagination.current_page === 1}"> < </button>
 
                 <a class="join-item"
-                   sla
                    v-for="page in pagination.last_page"
                    @click.prevent="getPagination(paginationLink(page, pagination))"
                    :href="paginationLink(page, pagination)"
@@ -148,9 +149,11 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.current_pag
 
                 <a class="join-item btn"
                    :href="paginationNextLink"
+                   @click.prevent="getPagination(paginationNextLink)"
                    v-if="pagination.current_page !== pagination.last_page"> > </a>
 
-                <button class="join-item btn"
+                <button v-else
+                        class="join-item btn"
                         :class="{'btn-disabled': pagination.current_page === pagination.last_page}"> > </button>
 
             </div>
