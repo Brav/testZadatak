@@ -74,6 +74,33 @@ let getPagination = (link) => {
         })
 }
 
+
+let paginationArray = computed(() => {
+    let pages = [];
+    let startPage = Math.max(pagination.value.current_page - 2, 1);
+    let endPage = Math.min(startPage + 4, pagination.value.last_page);
+
+    if (endPage - startPage < 4) {
+        startPage = Math.max(endPage - 4, 1);
+    }
+
+    if (startPage > 1) {
+        pages.push(1);
+        pages.push('...');
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+    }
+
+    if (endPage < pagination.value.last_page) {
+        pages.push('...');
+        pages.push(pagination.value.last_page);
+    }
+
+    return pages;
+});
+
 let paginationBackLink = computed(() => `api/items?page=${pagination.value.current_page - 1}`)
 let paginationNextLink = computed(() => `api/items?page=${pagination.value.current_page + 1}`)
 
@@ -140,12 +167,17 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.value.curre
                         class="join-item btn"
                         :class="{'btn-disabled': pagination.current_page === 1}"> < </button>
 
-                <a class="join-item"
-                   v-for="page in pagination.last_page"
-                   @click.prevent="getPagination(paginationLink(page, pagination))"
-                   :href="paginationLink(page, pagination)"
-                   :class="pagination.current_page === page ? 'btn btn-primary pointer-events-none' : 'btn'"
-                   >{{page}}</a>
+                <div v-for="(page, index) in paginationArray" :key="index">
+                    <a class="join-item"
+
+                       v-if="page !== '...'"
+                       @click.prevent="getPagination(paginationLink(page, pagination))"
+                       :href="paginationLink(page, pagination)"
+                       :class="pagination.current_page === page ? 'btn btn-primary pointer-events-none' : 'btn'"
+                       >{{page}}</a>
+
+                    <span v-else>{{ page }}</span>
+                </div>
 
                 <a class="join-item btn"
                    :href="paginationNextLink"
@@ -157,7 +189,6 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.value.curre
                         :class="{'btn-disabled': pagination.current_page === pagination.last_page}"> > </button>
 
             </div>
-
 
         </div>
     </div>
