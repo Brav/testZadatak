@@ -5,14 +5,14 @@ import { onMounted, ref, computed } from 'vue';
 let categories = ref([])
 let tvModels = ref([])
 let pagination = ref([])
-let currentCategoryID = ref(null)
+let currentCategory = ref(null)
 
 onMounted(async () => {
 
     axios.get('api/categories')
         .then(response => {
             categories.value = response.data.categories
-            currentCategoryID.value = categories.value[0].id
+            currentCategory.value = categories.value[0]
         })
         .catch(error => {
             console.log(error)
@@ -38,19 +38,22 @@ let tvImage = (image) => {
 }
 
 let paginationLink = (page, pagination) => {
-    return pagination.current_page === page ? `javascript:void(0)` : `api/items/${currentCategoryID.value}?page=${page}`
+    return pagination.current_page === page ? `javascript:void(0)` : `api/items/${currentCategory.value.id}?page=${page}`
 }
 
 let categoryLink = (categoryID) => {
     return `api/items/${categoryID}`
 }
 
-let getCategory = (link, categoryID) => {
+let getCategory = (link, category) => {
+
+    if(category.id === currentCategory.value.id) return
+
     axios.get(link)
         .then(response => {
             tvModels.value = response.data.tvs
             pagination.value = response.data.pagination
-            currentCategoryID.value = categoryID
+            currentCategory.value = category
         })
         .catch(error => {
             console.log(error)
@@ -58,6 +61,9 @@ let getCategory = (link, categoryID) => {
 }
 
 let getPagination = (link) => {
+
+    if(link === 'javascript:void(0)') return
+
     axios.get(link)
         .then(response => {
             tvModels.value = response.data.tvs
@@ -81,10 +87,10 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.current_pag
             <ul class="menu">
                 <li v-for="category in categories"
                     class="menu-title capitalize"
-                    :class="category.id === currentCategoryID ? 'bg-primary text-white' : ''"
+                    :class="category.id === currentCategory.id ? 'bg-primary text-white pointer-events-none' : ''"
                     :key="category.id"
                 ><a
-                    @click.prevent="getCategory(categoryLink(category.id), category.id)"
+                    @click.prevent="getCategory(categoryLink(category.id), category)"
                     :href="categoryLink(category.id)"
                 >{{ category.name }}</a></li>
             </ul>
@@ -133,10 +139,11 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.current_pag
                         :class="{'btn-disabled': pagination.current_page === 1}"> < </button>
 
                 <a class="join-item"
+                   sla
                    v-for="page in pagination.last_page"
                    @click.prevent="getPagination(paginationLink(page, pagination))"
                    :href="paginationLink(page, pagination)"
-                   :class="pagination.current_page === page ? 'btn-primary' : 'btn'"
+                   :class="pagination.current_page === page ? 'btn btn-primary pointer-events-none' : 'btn'"
                    >{{page}}</a>
 
                 <a class="join-item btn"
@@ -152,7 +159,3 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.current_pag
         </div>
     </div>
 </template>
-
-<style scoped>
-
-</style>
