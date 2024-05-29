@@ -13,6 +13,8 @@ onMounted(async () => {
         .then(response => {
             categories.value = response.data.categories
             currentCategory.value = categories.value[0]
+
+            console.log(categories.value)
         })
         .catch(error => {
             console.log(error)
@@ -117,7 +119,9 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.value.curre
                 ><a
                     @click.prevent="getCategory(categoryLink(category.id), category)"
                     :href="categoryLink(category.id)"
-                >{{ category.name }}</a></li>
+                >{{ category.name }}
+                    <span class="badge badge-info float-end">{{ category.items_count }}</span>
+                </a></li>
             </ul>
         </div>
         <div class="w-3/4">
@@ -139,9 +143,9 @@ let paginationNextLink = computed(() => `api/items?page=${pagination.value.curre
                                 {{ tv.price }}
                             </div>
 
-                            <h2 class="card-title gap-0.5">
-                                {{ tv.brand }}
-                                <span class="font-normal" v-html="tv.name"></span>
+                            <h2 class="flex card-title items-center text-center justify-center">
+                                <div class="text-lg">{{ tv.brand }}</div>
+                                <div class="font-normal text-sm" v-html="tv.name"></div>
                             </h2>
                             <div class="card-actions justify-end">
                                 <a class="btn btn-primary" :href="tvLink(tv.link)"
